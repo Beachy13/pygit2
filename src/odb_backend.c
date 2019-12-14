@@ -488,7 +488,7 @@ OdbBackend_read(OdbBackend *self, PyObject *py_hex)
 
     /* XXX: This assumes the default libgit2 allocator is in use and will
      * probably segfault and/or destroy the universe otherwise */
-    free(data);
+    //free(data);
 
     return tuple;
 }
@@ -529,7 +529,7 @@ OdbBackend_read_prefix(OdbBackend *self, PyObject *py_hex)
 
     /* XXX: This assumes the default libgit2 allocator is in use and will
      * probably segfault and/or destroy the universe otherwise */
-    free(data);
+    //free(data);
 
     return tuple;
 }

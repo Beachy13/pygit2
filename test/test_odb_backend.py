@@ -29,19 +29,19 @@
 import binascii
 import gc
 import os
-import unittest
 
 import pytest
 
 # Import from pygit2
-from pygit2 import Odb, OdbBackend, OdbBackendPack, OdbBackendLoose, Oid
-from pygit2 import GIT_OBJ_ANY, GIT_OBJ_BLOB
+from pygit2 import OdbBackend, OdbBackendPack, OdbBackendLoose, Oid
+from pygit2 import GIT_OBJ_BLOB
 
 from . import utils
 
 BLOB_HEX = 'af431f20fc541ed6d5afede3e2dc7160f6f01f16'
 BLOB_RAW = binascii.unhexlify(BLOB_HEX.encode('ascii'))
 BLOB_OID = Oid(raw=BLOB_RAW)
+
 
 class OdbBackendTest(utils.BareRepoTestCase):
 
@@ -68,6 +68,7 @@ class OdbBackendTest(utils.BareRepoTestCase):
         for obj in pack:
             assert obj in self.ref_odb
 
+
 class ProxyBackend(OdbBackend):
     def __init__(self, source):
         super().__init__()
@@ -92,12 +93,19 @@ class ProxyBackend(OdbBackend):
     def __iter__(self):
         return iter(self.source)
 
+
 class CustomBackendTest(utils.BareRepoTestCase):
+
     def setUp(self):
         super().setUp()
         self.obj_path = os.path.join(os.path.dirname(__file__),
                 'data', 'testrepo.git', 'objects')
         self.odb = ProxyBackend(OdbBackendPack(self.obj_path))
+
+    def tearDown(self):
+        del self.odb
+        gc.collect()
+        super().tearDown()
 
     def test_iterable(self):
         assert BLOB_HEX in [str(o) for o in self.odb]
